@@ -1,0 +1,26 @@
+[tool.poetry]
+name = "cloudwatch-loki-log-tailscale-function"
+version = "0.2.0"
+description = "ship cloudwatch logs with loki and tailscale"
+authors = ["Sacha <sacha.smart@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+packages = [{ include = "src" }]
+
+[tool.poetry.dependencies]
+python = "^3.12"
+certifi = "2019.11.28"
+chardet = "3.0.4"
+idna = "2.8"
+pydantic-settings = "^2.9.1"
+structlog = "^25.4.0"
+httpx = "^0.28.1"
+
+
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.4.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

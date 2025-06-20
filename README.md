@@ -1,7 +1,7 @@
 > [!note]
 > Work in Progress
 
-# Cloudwatch Loki Shipper over Tailscale
+# Ship Cloudwatch Logs to Grafana Loki using Tailscale
 
 ## Goal:
 
@@ -35,3 +35,11 @@ Create a `.env` file in the root directory of the project with the following var
 make setup
 make install
 ```
+
+---
+
+### Roadmap
+
+- [ ] Clean up cloudwatch logs
+- [ ] Add test cases
+- [ ] Add Terraform configuration
