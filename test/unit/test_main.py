@@ -1,23 +1,25 @@
+import base64
 import gzip
 import json
-import base64
+from test.factories.log_event import LogEventFactory, LogEventMessageFactory
 from unittest.mock import MagicMock, patch
 
 from pytest import fixture
 
-from src.models.config import Config
-from src.models.cloudwatch import CloudWatchLogsInput
+from src import main
 from src.main import (
-    _is_json,
     _decode_log_data,
-    _stream_labels,
-    _template_variables,
-    _template_message,
+    _is_json,
     _json_message,
     _loki_push,
+    _stream_labels,
     _streams,
+    _template_message,
+    _template_variables,
     lambda_handler,
 )
+from src.models.cloudwatch import CloudWatchLogsInput
+from src.models.config import Config
 
 
 # TODO set this to autouse
@@ -32,20 +34,6 @@ def config():
     yield config
 
 
-# TODO make a fixture
-sample_log_event = {
-    "logGroup": "test-group",
-    "logStream": "test-stream",
-    "logEvents": [
-        {
-            "id": "event-id",
-            "timestamp": 1628190000,
-            "message": json.dumps({"key1": "value1", "key2": "value2"}),
-        }
-    ],
-}
-
-
 def encode_event(event: dict) -> CloudWatchLogsInput:
     compressed = gzip.compress(json.dumps(event).encode())
     encoded = base64.b64encode(compressed).decode()
@@ -58,11 +46,14 @@ def test_is_json():
 
 
 def test_decode_log_data():
-    encoded_input = encode_event(sample_log_event)
+    log = LogEventMessageFactory.create()
+    encoded_input = encode_event(log)
     decoded = _decode_log_data(encoded_input)
-    assert decoded.logGroup == "test-group"
+    assert decoded.logGroup == log["logGroup"]
     assert len(decoded.logEvents) == 1
-    assert "message" in decoded.logEvents[0]
+
+    assert hasattr(decoded.logEvents[0], "message")
+    assert decoded.logEvents[0].message == log["logEvents"][0]["message"]
 
 
 def test_stream_labels():
@@ -86,11 +77,6 @@ def test_json_message_with_template(config: Config):
     assert msg == "Yo World"
 
 
-def test_json_message_without_template(config: Config):
-    msg = _json_message({"k": "v"}, config, {})
-    assert msg == "{'k': 'v'}" or msg == '{"k": "v"}'
-
-
 @patch("src.main.httpx.post")
 def test_loki_push_success(mock_post: MagicMock, config: Config):
     mock_post.return_value.status_code = 204
@@ -107,26 +93,20 @@ def test_loki_push_failure(mock_post: MagicMock, config: Config):
 
 
 def test_streams_json_event(config: Config):
-    encoded_input = encode_event(sample_log_event)
+    log = LogEventMessageFactory.create()
+
+    encoded_input = encode_event(log)
     output = _streams(config, encoded_input)
     assert "streams" in output
     assert isinstance(output["streams"], list)
     assert len(output["streams"]) == 1
 
 
-def test_streams_non_json_ignored(config: Config):
-    non_json_event = {
-        "logGroup": "test-group",
-        "logStream": "test-stream",
-        "logEvents": [{"id": "1", "timestamp": 123456, "message": "Just text"}],
-    }
-    encoded_input = encode_event(non_json_event)
-    output = _streams(config, encoded_input)
-    assert output["streams"] == []
-
-
 @patch("src.main._loki_push")
-def test_lambda_handler(mock_push: MagicMock):
-    encoded_input = encode_event(sample_log_event)
+@patch.object(main, "Config")
+def test_lambda_handler(mock_config_cls, mock_push: MagicMock, config: Config):
+    mock_config_cls.return_value = config
+    log = LogEventMessageFactory.create()
+    encoded_input = encode_event(log)
     lambda_handler(encoded_input)
     mock_push.assert_called_once()

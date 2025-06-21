@@ -1,11 +1,14 @@
+import base64
 import gzip
 import json
-import base64
-import httpx
 from string import Template
-from typing import List, Optional, Dict, Any
-from models.config import Config
+from typing import Any, Dict, List, Optional
+
+import httpx
 from structlog import get_logger
+
+from models.config import Config
+
 from .models.cloudwatch import CloudWatchLogsInput, DecodedLogData
 
 log = get_logger(__name__)
@@ -18,7 +21,7 @@ def _is_json(message: str) -> bool:
 def _decode_log_data(event: CloudWatchLogsInput) -> DecodedLogData:
     compressed_payload = base64.b64decode(event.awslogs["data"])
     decompressed = gzip.decompress(compressed_payload)
-    return DecodedLogData.parse_raw(decompressed)
+    return DecodedLogData.model_validate_json(decompressed)
 
 
 def _stream_labels(log_labels: List[str], nested_json: dict) -> Dict[str, Any]:
@@ -26,7 +29,7 @@ def _stream_labels(log_labels: List[str], nested_json: dict) -> Dict[str, Any]:
     for label in log_labels:
         value = nested_json.get(label)
         if value is None:
-            print(f"stream label not found: {label}")
+            log.warning("Stream label not found", label=label, nested_json=nested_json)
             continue
         stream_labels[label] = value
     return stream_labels
@@ -67,19 +70,23 @@ def _loki_push(config: Config, stream_data: dict) -> None:
     try:
         response = httpx.post(config.loki_endpoint, json=stream_data)
         if response.status_code != 204:
-            print(f"request failed: {response.status_code}, body: {response.text}")
+            log.error(
+                "Failed to push logs to Loki",
+                status_code=response.status_code,
+                response_body=response.text,
+            )
     except httpx.HTTPError as e:
-        print(f"HTTP request failed: {e}")
+        log.error("HTTP error while pushing logs to Loki", error=str(e))
 
 
 def _streams(config: Config, cloudwatch_event: dict) -> dict:
     log_data = _decode_log_data(cloudwatch_event)
     streams = {"streams": []}
-    base_labels = {"logGroup": log_data["logGroup"]}
+    base_labels = {"logGroup": log_data.logGroup}
 
-    for entry in log_data["logEvents"]:
+    for entry in log_data.logEvents:
         log.debug("Processing log entry", entry=entry)
-        message = entry["message"]
+        message = entry.message
 
         if _is_json(message):
             nested_json = json.loads(message)
@@ -91,14 +98,14 @@ def _streams(config: Config, cloudwatch_event: dict) -> dict:
             log.warning(
                 "Non-JSON log entry ignored",
                 message=message,
-                log_group=log_data["logGroup"],
+                log_group=log_data.logGroup,
             )
             continue
         else:
             stream_labels = base_labels.copy()
             formatted_message = message
 
-        timestamp = str(entry["timestamp"] * 1000000)
+        timestamp = str(entry.timestamp * 1000000)
         stream_value = [timestamp, formatted_message]
         stream = {"stream": stream_labels, "values": [stream_value]}
         streams["streams"].append(stream)
@@ -112,8 +119,8 @@ def _streams(config: Config, cloudwatch_event: dict) -> dict:
 
 
 def lambda_handler(cloudwatch_event: dict, context: Optional[Any] = None) -> None:
-    log.info("Lambda handler invoked", event=cloudwatch_event)
+    log.info("Lambda handler invoked", cloudwatch_event=cloudwatch_event)
     config = Config()
     streams = _streams(config, cloudwatch_event)
     _loki_push(config, streams)
-    log.info("Lambda processing complete", event=cloudwatch_event)
+    log.info("Lambda processing complete", cloudwatch_event=cloudwatch_event)
