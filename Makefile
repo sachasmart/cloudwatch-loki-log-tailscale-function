@@ -6,3 +6,6 @@ install:
 
 test:
 	poetry run pytest
+
+build:
+	sh ./build.sh

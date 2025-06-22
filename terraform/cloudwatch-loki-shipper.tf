@@ -17,10 +17,10 @@ resource "null_resource" "lambda_build" {
 resource "aws_s3_object" "lambda_zip" {
   bucket     = module.bucket.bucket
   key        = "${var.environment}/cloudwatch-loki-tailscale-shipper.zip"
-  source     = data.archive_file.lambda_package.output_path
-  etag       = filemd5(data.archive_file.lambda_package.output_path)
-  depends_on = [module.bucket]
+  source     = "${path.module}/../publish/cloudwatch-loki-shipper.zip"
+  depends_on = [module.bucket, null_resource.lambda_build]
 }
+
 
 
 
@@ -29,10 +29,11 @@ resource "aws_lambda_function" "cloudwatch-loki-tailscale-shipper" {
   s3_key        = "${var.environment}/cloudwatch-loki-tailscale-shipper.zip"
   function_name = "cloudwatch-loki-tailscale-shipper"
   role          = aws_iam_role.cloudwatch-loki-tailscale-shipper.arn
-  handler       = "loki-shipper.lambda_handler"
+  handler       = "main.lambda_handler"
   memory_size   = "128"
-  runtime       = "python3.9"
+  runtime       = "python3.12"
   timeout       = "600"
+
 
   environment {
     variables = {

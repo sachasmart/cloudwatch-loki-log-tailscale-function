@@ -7,9 +7,8 @@ from typing import Any, Dict, List, Optional
 import httpx
 from structlog import get_logger
 
+from models.cloudwatch import CloudWatchLogsInput, DecodedLogData
 from models.config import Config
-
-from .models.cloudwatch import CloudWatchLogsInput, DecodedLogData
 
 log = get_logger(__name__)
 

@@ -8,15 +8,15 @@ readme = "README.md"
 packages = [{ include = "src" }]
 
 [tool.poetry.dependencies]
+factory-boy = "3.3.3"
 python = "^3.12"
 certifi = "2019.11.28"
 chardet = "3.0.4"
 idna = "2.8"
-pydantic-settings = "^2.9.1"
-structlog = "^25.4.0"
-httpx = "^0.28.1"
-factory-boy = "^3.3.3"
-
+structlog = "25.4.0"
+httpx = "0.28.1"
+pydantic-settings = "2.9.1"
+pydantic = "2.11.7"
 
 
 [tool.poetry.group.dev.dependencies]
@@ -25,3 +25,6 @@ pytest = "^8.4.1"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.requires-plugins]
+poetry-plugin-export = ">=1.8"
