@@ -2,23 +2,12 @@ locals {
   name_prefix_shipper = "cloudwatch-loki-tailscale-shipper-"
 }
 
-resource "null_resource" "lambda_build" {
-  provisioner "local-exec" {
-    command = "${path.module}/../build.sh"
-  }
-
-  triggers = {
-    always_run = timestamp()
-  }
-}
-
-
 
 resource "aws_s3_object" "lambda_zip" {
   bucket     = module.bucket.bucket
   key        = "${var.environment}/cloudwatch-loki-tailscale-shipper.zip"
-  source     = "${path.module}/../publish/cloudwatch-loki-shipper.zip"
-  depends_on = [module.bucket, null_resource.lambda_build]
+  source     = "${path.module}/../cloudwatch-loki-shipper.zip"
+  depends_on = [module.bucket]
 }
 
 

@@ -18,8 +18,12 @@ class TailscaleConfig(BaseModel):
 class Config(BaseModel):
     log_loki_endpoint: str = Field(
         description="Loki endpoint URL for pushing logs",
+        default=os.getenv("LOG_LOKI_ENDPOINT"),
     )
-    log_labels: List[str] = Field()
+    log_labels: List[str] = Field(
+        default_factory=lambda: os.getenv("LOG_LABELS", "level,message").split(","),
+        description="Labels to be used for log streams in Loki",
+    )
     log_template: str = Field(
         default="$message",
         description="Template for log messages, using Python string formatting syntax",
@@ -36,7 +40,7 @@ class Config(BaseModel):
     ]
 
     # TODO: Consider using or switch to removing os.env
-    model_config = SettingsConfigDict(env_prefix="log_")
+    model_config = SettingsConfigDict(env_prefix="LOG_")
 
     @model_validator(mode="before")
     def warn_on_template_without_labels(cls, values):
