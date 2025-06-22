@@ -4,3 +4,5 @@ cloudwatch-loki-shipper.zip
 terraform/.terraform.lock.hcl
 
 build/
+
+publish/
