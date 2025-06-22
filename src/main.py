@@ -118,20 +118,9 @@ def _streams(config: Config, cloudwatch_event: dict) -> dict:
     return streams
 
 
-def tailscale_setup():
-
 def lambda_handler(cloudwatch_event: dict, context: Optional[Any] = None) -> None:
     log.info("Lambda handler invoked", cloudwatch_event=cloudwatch_event)
     config = Config()
     streams = _streams(config, cloudwatch_event)
     _loki_push(config, streams)
     log.info("Lambda processing complete", cloudwatch_event=cloudwatch_event)
-
-
-event = {
-    "awslogs": {
-        "data": "H4sIAAAAAAAA/43QwWobMRSF4VcRd5XCGF9dSVfS7FzietN2UbsrY4wyViciM9Z0JCeUkHcvcekihUL2/4GP8wxjLCX0cfdritDC7Wq3On5Zb7erzRoayE/nOEMLaFmzQcfeKGhgyP1mzpcJWig19OncH085z8caysNxyH3502zrHMMILcSuLN+EYUrXePnDy444RmWi14ZMuOts0FqhNIGjOUED5XJXujlNNeXzpzTUOBdo99AN+XJ6CrW7Xwz5IS1qSEPpwhAX5T5NU5zhcEWsH+O5vi6eIZ2gBeVRI1lGUsiaLTqvtfXsFbLyJFEa6410yqJziFYraR1phAZqGmOpYZygldYgExsiJ3Xz90RoYf81lnoQhGSWyEsiQbJF12oSQojb9cfvG7H/Fn9eYqmfc9/H+SCE2Kx3ghDFcox1Tl0RN3osH+Cl+RftjUNvUVpF6Ng4Y41kiYZerYaJWaNSZCR5Q0r9B81o+V1ofhf6Mc4l5bO4kVf04eU3DDCJc1YCAAA="
-    }
-}
-
-print(lambda_handler(event))

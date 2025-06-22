@@ -1,6 +1,5 @@
 FROM public.ecr.aws/lambda/provided:al2 AS builder
 WORKDIR /app
-COPY publish/ ./
 COPY bootstrap ./
 
 FROM public.ecr.aws/lambda/provided:al2
@@ -12,5 +11,8 @@ RUN mkdir -p /var/run && ln -s /tmp/tailscale /var/run/tailscale && \
     mkdir -p /var/cache && ln -s /tmp/tailscale /var/cache/tailscale && \
     mkdir -p /var/lib && ln -s /tmp/tailscale /var/lib/tailscale && \
     mkdir -p /var/task && ln -s /tmp/tailscale /var/task/tailscale
+
+COPY publish/ /var/task/
+RUN chmod +x /var/runtime/bootstrap
 
 ENTRYPOINT ["/var/runtime/bootstrap"]
