@@ -2,3 +2,5 @@ venv
 cloudwatch-loki-shipper.zip
 
 terraform/.terraform.lock.hcl
+
+build/

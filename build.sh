@@ -12,19 +12,23 @@ mkdir -p "$BUILD_DIR"
 
 echo "Installing dependencies..."
 poetry export -f requirements.txt --without-hashes --without dev -o "$BUILD_DIR/requirements.txt"
-
-pip install -r "$BUILD_DIR/requirements.txt" -t "$BUILD_DIR" --platform manylinux2014_x86_64 --no-deps
+pip install -r "$BUILD_DIR/requirements.txt" -t "$BUILD_DIR" --no-deps --upgrade
 
 echo "Copying source code..."
-cp -r "$SRC_DIR"/* "$BUILD_DIR/"
+cp "$SRC_DIR/main.py" "$BUILD_DIR/"
+cp -r "$SRC_DIR/models" "$BUILD_DIR/"
 
-rm "$BUILD_DIR/requirements.txt"
+rm -f "$BUILD_DIR/requirements.txt"
 
 echo "Creating zip file..."
 cd "$BUILD_DIR"
 zip -r9 "$ZIP_PATH" .
 
 echo "Lambda package created: $ZIP_PATH"
-
+echo "Package size: $(du -h "$ZIP_PATH" | cut -f1)"
+echo ""
 echo "Zip file contents:"
-unzip -l "$ZIP_PATH" | head -20
+unzip -l "$ZIP_PATH" | head -30
+echo ""
+echo "Verifying package structure..."
+unzip -l "$ZIP_PATH" | grep -E "(main\.py|models/|pydantic|httpx|structlog)" | head -10

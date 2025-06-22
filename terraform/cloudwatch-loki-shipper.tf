@@ -37,7 +37,7 @@ resource "aws_lambda_function" "cloudwatch-loki-tailscale-shipper" {
 
   environment {
     variables = {
-      LOKI_ENDPOINT          = "https://${var.loki_endpoint}"
+      LOG_LOKI_ENDPOINT      = "https://${var.loki_endpoint}"
       LOG_LABELS             = "classname,logger_name"
       LOG_TEMPLATE           = "level=$level | $message"
       LOG_TEMPLATE_VARIABLES = "level,message"

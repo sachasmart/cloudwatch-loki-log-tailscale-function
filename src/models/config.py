@@ -2,7 +2,6 @@ import os
 from typing import List, Optional
 
 from pydantic import BaseModel, Field, model_validator, root_validator
-from typing import Optional
 from pydantic_settings import SettingsConfigDict
 from structlog import get_logger
 
@@ -17,7 +16,7 @@ class TailscaleConfig(BaseModel):
 
 
 class Config(BaseModel):
-    loki_endpoint: str = Field(
+    log_loki_endpoint: str = Field(
         description="Loki endpoint URL for pushing logs",
     )
     log_labels: List[str] = Field()
@@ -35,6 +34,9 @@ class Config(BaseModel):
         "1",
         "yes",
     ]
+
+    # TODO: Consider using or switch to removing os.env
+    model_config = SettingsConfigDict(env_prefix="log_")
 
     @model_validator(mode="before")
     def warn_on_template_without_labels(cls, values):
