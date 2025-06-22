@@ -9,3 +9,9 @@ variable "loki_endpoint" {
   type        = string
   default     = "loki.example.com:3100"
 }
+
+variable "environment" {
+  description = "Deployment environment"
+  type        = string
+  default     = "ca-central-1"
+}

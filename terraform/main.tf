@@ -9,3 +9,8 @@ module "vpc" {
 }
 
 
+module "bucket" {
+  source      = "./modules/bucket"
+  bucket_name = "ins-cloudwatch-loki-tailscale-shipper"
+  environment = "staging"
+}
