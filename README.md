@@ -37,6 +37,7 @@ make install
 ```
 
 ### Sample Request
+Check that the tailscale operator can receive requests:
 
 ```bash
 curl -vk -X POST "https://<k8 operator on tailnet>ts.net/loki/api/v1/push"   -H "Content-Type: application/json"   -d '{
@@ -52,6 +53,7 @@ curl -vk -X POST "https://<k8 operator on tailnet>ts.net/loki/api/v1/push"   -H 
     ]
   }'
 ```
+<img width="1661" alt="Screen Shot 2025-06-21 at 11 06 59 PM" src="https://github.com/user-attachments/assets/4d223b28-7c50-47c5-bca2-92b0c56d8e47" />
 
 ---
 
