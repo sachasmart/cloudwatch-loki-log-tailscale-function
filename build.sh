@@ -3,12 +3,13 @@ set -e
 
 BASE_DIR="$(cd "$(dirname "$0")" && pwd)"
 BUILD_DIR="$BASE_DIR/build"
-ZIP_PATH="$BASE_DIR/cloudwatch-loki-shipper.zip"
+ZIP_PATH="$BASE_DIR/publish/cloudwatch-loki-shipper.zip"
 SRC_DIR="$BASE_DIR/src"
 
 # Clean up previous builds
 rm -rf "$BUILD_DIR" "$ZIP_PATH"
 mkdir -p "$BUILD_DIR"
+mkdir -p "$ZIP_PATH"
 
 echo "Installing dependencies..."
 poetry export -f requirements.txt --without-hashes --without dev -o "$BUILD_DIR/requirements.txt"

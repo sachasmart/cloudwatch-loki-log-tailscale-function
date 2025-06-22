@@ -1,6 +1,7 @@
 FROM public.ecr.aws/lambda/provided:al2 as builder
 WORKDIR /app
-COPY publish/cloudwatch-loki-shipper ./
+COPY publish/ ./
+COPY bootstrap ./
 
 FROM public.ecr.aws/lambda/provided:al2
 COPY --from=builder /app/bootstrap /var/runtime/bootstrap
