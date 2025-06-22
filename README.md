@@ -36,6 +36,23 @@ make setup
 make install
 ```
 
+### Sample Request
+
+```bash
+curl -vk -X POST "https://<k8 operator on tailnet>ts.net/loki/api/v1/push"   -H "Content-Type: application/json"   -d '{
+    "streams": [
+      {
+        "stream": {
+          "label": "test"
+        },
+        "values": [
+          [ "'"$(date +%s%N)"'", "Test log from Tailscale Ingress" ]
+        ]
+      }
+    ]
+  }'
+```
+
 ---
 
 ### Roadmap
@@ -43,3 +60,4 @@ make install
 - [ ] Clean up cloudwatch logs
 - [ ] Add test cases
 - [ ] Add Terraform configuration
+- [ ] Documentation for setting up Tailscale and K8s operator
