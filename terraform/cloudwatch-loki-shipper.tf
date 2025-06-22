@@ -1,5 +1,5 @@
 locals {
-  name_prefix_shipper = "ship-"
+  name_prefix_shipper = "cloudwatch-loki-tailscale-shipper-"
 }
 
 resource "aws_lambda_function" "cloudwatch-loki-tailscale-shipper" {
@@ -51,6 +51,11 @@ resource "aws_security_group" "lambda_egress" {
   tags = {
     Name = "${local.name_prefix_shipper}lambda-egress"
   }
+}
+
+resource "aws_cloudwatch_log_group" "events-router" {
+  name              = "/aws/lambda/events-router"
+  retention_in_days = 1
 }
 
 resource "aws_lambda_permission" "cloudwatch-loki-tailscale-shipper" {
