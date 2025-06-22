@@ -79,6 +79,7 @@ def _loki_push(config: Config, stream_data: dict) -> None:
 
 
 def _streams(config: Config, cloudwatch_event: dict) -> dict:
+    event_model = CloudWatchLogsInput.model_validate(cloudwatch_event)
     log_data = _decode_log_data(cloudwatch_event)
     streams = {"streams": []}
     base_labels = {"logGroup": log_data.logGroup}
