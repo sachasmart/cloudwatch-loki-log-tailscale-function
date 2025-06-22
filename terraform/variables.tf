@@ -15,3 +15,8 @@ variable "environment" {
   type        = string
   default     = "ca-central-1"
 }
+
+variable "tailscale_auth_key" {
+  description = "Tailscale auth key for secure access"
+  type        = string
+}
