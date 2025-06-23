@@ -3,13 +3,13 @@ set -e
 
 BASE_DIR="$(cd "$(dirname "$0")" && pwd)"
 BUILD_DIR="$BASE_DIR/build"
-ZIP_PATH="$BASE_DIR/publish/cloudwatch-loki-shipper.zip"
+ZIP_DIR="$BASE_DIR/publish"
+ZIP_PATH="$ZIP_DIR/cloudwatch-loki-shipper.zip"
 SRC_DIR="$BASE_DIR/src"
 
-# Clean up previous builds
 rm -rf "$BUILD_DIR" "$ZIP_PATH"
 mkdir -p "$BUILD_DIR"
-mkdir -p "$ZIP_PATH"
+mkdir -p "$ZIP_DIR"
 
 echo "Installing dependencies..."
 poetry export -f requirements.txt --without-hashes --without dev -o "$BUILD_DIR/requirements.txt"
@@ -22,8 +22,8 @@ cp -r "$SRC_DIR/models" "$BUILD_DIR/"
 rm -f "$BUILD_DIR/requirements.txt"
 
 echo "Creating zip file..."
-cd "$BUILD_DIR"
-zip -r9 "$ZIP_PATH" .
+
+(cd "$BUILD_DIR" && zip -r9 "$ZIP_PATH" .)
 
 echo "Lambda package created: $ZIP_PATH"
 echo "Package size: $(du -h "$ZIP_PATH" | cut -f1)"
