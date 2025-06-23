@@ -12,7 +12,7 @@ RUN mkdir -p /var/run && ln -s /tmp/tailscale /var/run/tailscale && \
     mkdir -p /var/lib && ln -s /tmp/tailscale /var/lib/tailscale && \
     mkdir -p /var/task && ln -s /tmp/tailscale /var/task/tailscale
 
-COPY publish/ /var/task/
+COPY build/ /var/task/
 RUN chmod +x /var/runtime/bootstrap
 
 ENTRYPOINT ["/var/runtime/bootstrap"]
