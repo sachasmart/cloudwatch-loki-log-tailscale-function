@@ -1,8 +1,9 @@
-FROM public.ecr.aws/lambda/provided:al2 AS builder
+FROM public.ecr.aws/lambda/python:3.12 AS builder
+
 WORKDIR /app
 COPY bootstrap ./
 
-FROM public.ecr.aws/lambda/provided:al2
+FROM public.ecr.aws/lambda/python:3.12
 COPY --from=builder /app/bootstrap /var/runtime/bootstrap
 
 COPY --from=docker.io/tailscale/tailscale:stable /usr/local/bin/tailscaled /var/runtime/tailscaled
