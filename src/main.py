@@ -106,11 +106,11 @@ def _streams(config: Config, cloudwatch_event: dict) -> dict:
             )
             continue
         else:
+            stream_labels = base_labels.copy()
             for level in LogLevel:
                 if level.value in message:
                     stream_labels["level"] = level.name.lower()
                     break
-            stream_labels = base_labels.copy()
             formatted_message = message
 
         timestamp = str(entry.timestamp * 1000000)
