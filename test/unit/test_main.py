@@ -93,9 +93,9 @@ def test_loki_push_failure(mock_post: MagicMock, config: Config):
 
 
 def test_streams_json_event(config: Config):
-    log = LogEventMessageFactory.create()
+    log_event = LogEventMessageFactory()
+    encoded_input = encode_event(log_event)
 
-    encoded_input = encode_event(log)
     output = _streams(config, encoded_input)
     assert "streams" in output
     assert isinstance(output["streams"], list)

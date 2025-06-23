@@ -1,6 +1,7 @@
 import base64
 import gzip
 import json
+from enum import Enum
 from string import Template
 from typing import Any, Dict, List, Optional
 
@@ -8,6 +9,7 @@ import httpx
 from structlog import get_logger
 
 from models.cloudwatch import CloudWatchLogsInput, DecodedLogData
+from models.common import LogLevel
 from models.config import Config
 
 log = get_logger(__name__)
@@ -67,7 +69,9 @@ def _json_message(nested_json: dict, config: Config, stream_labels: dict) -> str
 def _loki_push(config: Config, stream_data: dict) -> None:
     log.info("Pushing logs to Loki", loki_endpoint=config.log_loki_endpoint)
     try:
-        response = httpx.post(config.log_loki_endpoint, json=stream_data)
+        response = httpx.post(
+            f"${config.log_loki_endpoint}/loki/api/v1/push", json=stream_data
+        )
         if response.status_code != 204:
             log.error(
                 "Failed to push logs to Loki",
@@ -102,6 +106,10 @@ def _streams(config: Config, cloudwatch_event: dict) -> dict:
             )
             continue
         else:
+            for level in LogLevel:
+                if level.value in message:
+                    stream_labels["level"] = level.name.lower()
+                    break
             stream_labels = base_labels.copy()
             formatted_message = message
 
