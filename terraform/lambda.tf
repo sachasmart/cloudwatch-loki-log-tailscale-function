@@ -21,7 +21,7 @@ resource "aws_lambda_function" "cloudwatch-loki-tailscale-shipper" {
       LOG_LABELS             = "classname,logger_name"
       LOG_TEMPLATE           = "level=$level | $message"
       LOG_TEMPLATE_VARIABLES = "level,message"
-      LOG_IGNORE_NON_JSON    = "true"
+      LOG_IGNORE_NON_JSON    = "false"
     }
   }
 

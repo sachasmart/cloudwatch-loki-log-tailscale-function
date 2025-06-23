@@ -14,7 +14,7 @@ certifi = "2019.11.28"
 chardet = "3.0.4"
 idna = "2.8"
 structlog = "25.4.0"
-httpx = "0.28.1"
+httpx = {extras = ["socks"], version = "^0.28.1"}
 pydantic-settings = "2.9.1"
 pydantic = "2.11.7"
 awslambdaric = "^3.1.1"
