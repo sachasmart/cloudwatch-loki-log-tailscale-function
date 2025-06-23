@@ -12,9 +12,6 @@ RUN mkdir -p /var/run && ln -s /tmp/tailscale /var/run/tailscale && \
     mkdir -p /var/lib && ln -s /tmp/tailscale /var/lib/tailscale && \
     mkdir -p /var/task && ln -s /tmp/tailscale /var/task/tailscale
 
-# Install the aws-lambda-ric package for custom runtime
-RUN pip install awslambdaric
-
 COPY publish/ /var/task/
 RUN chmod +x /var/runtime/bootstrap
 

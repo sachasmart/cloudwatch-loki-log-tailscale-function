@@ -5,4 +5,4 @@ mkdir -p /tmp/tailscale
 /var/runtime/tailscale up --auth-key=${TAILSCALE_AUTHKEY} --hostname=cloudwatch-loki-shipper
 echo Tailscale started
 
-ALL_PROXY=socks5://localhost:1055/ exec python -m awslambdaric main.lambda_handler
+ALL_PROXY=socks5://localhost:1055/ exec python3 -m awslambdaric main.lambda_handler
