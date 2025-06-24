@@ -1,12 +1,11 @@
 locals {
   name_prefix_shipper = "cloudwatch-loki-tailscale-shipper-"
-  ghcr_ecr_url        = "ghcr.io/sachasmart/cloudwatch-loki-tailscale-shipper"
 }
 
 resource "aws_lambda_function" "cloudwatch-loki-tailscale-shipper" {
   function_name = "cloudwatch-loki-tailscale-shipper"
   role          = aws_iam_role.cloudwatch-loki-tailscale-shipper.arn
-  image_uri     = "${local.ghcr_ecr_url}:latest"
+  image_uri     = "${local.aws_ecr_url}/${aws_ecr_repository.ecr.name}:latest"
   package_type  = "Image"
 
   handler     = "main.lambda_handler"
@@ -17,7 +16,7 @@ resource "aws_lambda_function" "cloudwatch-loki-tailscale-shipper" {
 
   environment {
     variables = {
-      LOG_LOKI_ENDPOINT      = "https://${var.loki_endpoint}"
+      LOG_LOKI_ENDPOINT      = "${var.loki_endpoint}"
       TAILSCALE_AUTHKEY      = var.tailscale_auth_key
       LOG_LABELS             = "classname,logger_name"
       LOG_TEMPLATE           = "level=$level | $message"

@@ -69,9 +69,7 @@ def _json_message(nested_json: dict, config: Config, stream_labels: dict) -> str
 def _loki_push(config: Config, stream_data: dict) -> None:
     log.info("Pushing logs to Loki", loki_endpoint=config.log_loki_endpoint)
     try:
-        response = httpx.post(
-            f"${config.log_loki_endpoint}/loki/api/v1/push", json=stream_data
-        )
+        response = httpx.post(config.log_loki_endpoint, json=stream_data)
         if response.status_code != 204:
             log.error(
                 "Failed to push logs to Loki",
