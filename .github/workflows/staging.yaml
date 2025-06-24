@@ -6,6 +6,9 @@ on:
 jobs:
   backend:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     environment: staging
     name: "build"
     defaults:
@@ -27,7 +30,7 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
-          password: ${{ secrets.GHCR_TOKEN}}
+          password: ${{ secrets.GITHUB_TOKEN}}
 
       - name: Install Poetry
         uses: snok/install-poetry@v1
