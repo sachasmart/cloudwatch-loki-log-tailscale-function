@@ -68,5 +68,5 @@ curl -vk -X POST "https://<k8 operator on tailnet>ts.net/loki/api/v1/push"   -H 
   - setting up Tailscale and K8s operator (include example of manifest)
   - setting up Grafana Loki
   - Building on x86_64 or ARM64
-- [ ] Figure out a better build system
+- [x] Figure out a better build system
 - [ ] Write and link blog post

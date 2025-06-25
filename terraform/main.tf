@@ -14,3 +14,15 @@ module "bucket" {
   bucket_name = "ins-cloudwatch-loki-tailscale-shipper"
   environment = "staging"
 }
+
+
+module "cloudwatch_log_subscription" {
+  source = "./modules/cloudwatch"
+
+  region               = var.region
+  log_group_name       = var.log_group_name
+  lambda_function_name = aws_lambda_function.cloudwatch-loki-tailscale-shipper.function_name
+  lambda_function_arn  = aws_lambda_function.cloudwatch-loki-tailscale-shipper.arn
+  lambda_role_name     = aws_iam_role.cloudwatch-loki-tailscale-shipper.name
+  lambda_policy_arn    = aws_iam_policy.cloudwatch-loki-tailscale-shipper.arn
+}

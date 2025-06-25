@@ -29,5 +29,8 @@ resource "aws_lambda_function" "cloudwatch-loki-tailscale-shipper" {
     subnet_ids         = module.vpc.private_subnets
     security_group_ids = [aws_security_group.lambda_egress.id]
   }
+  lifecycle {
+    ignore_changes = [runtime, handler]
+  }
   depends_on = [module.bucket]
 }
