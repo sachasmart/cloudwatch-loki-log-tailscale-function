@@ -1,6 +1,7 @@
 import base64
 import gzip
 import json
+
 from pydantic import BaseModel, model_validator
 
 
@@ -31,18 +32,17 @@ class CloudWatchLogsInput(BaseModel):
 
     @model_validator(mode="before")
     def decode_data_field(cls, values):
-        encoded = values.get("awslogs", {}).get("data")
-        if not encoded:
-            raise ValueError("Missing 'data' in awslogs")
-
-        try:
-            compressed_payload = base64.b64decode(encoded)
-            decompressed = gzip.decompress(compressed_payload)
-            parsed = json.loads(decompressed)
-            values["data"] = parsed
-        except Exception as e:
-            raise ValueError(f"Failed to decode awslogs['data']: {e}")
-
+        awslogs = values.get("awslogs")
+        if awslogs and isinstance(awslogs, dict):
+            encoded_data = awslogs.get("data")
+            if encoded_data:
+                try:
+                    compressed_payload = base64.b64decode(encoded_data)
+                    decompressed = gzip.decompress(compressed_payload)
+                    parsed = json.loads(decompressed)
+                    values["data"] = parsed
+                except Exception as e:
+                    raise ValueError(f"Failed to decode awslogs['data']: {e}")
         return values
 
     def parsed_data(self) -> CloudWatchLogsData:

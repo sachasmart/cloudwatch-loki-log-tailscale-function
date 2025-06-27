@@ -93,10 +93,10 @@ def test_loki_push_failure(mock_post: MagicMock, config: Config):
 
 
 def test_streams_json_event(config: Config):
-    log_event = LogEventMessageFactory()
+    log_event = LogEventMessageFactory.create()
     encoded_input = encode_event(log_event)
 
-    output = _streams(config, encoded_input)
+    output = _streams(config, encoded_input.model_dump())
     assert "streams" in output
     assert isinstance(output["streams"], list)
     assert len(output["streams"]) == 1
@@ -108,5 +108,5 @@ def test_lambda_handler(mock_config_cls, mock_push: MagicMock, config: Config):
     mock_config_cls.return_value = config
     log = LogEventMessageFactory.create()
     encoded_input = encode_event(log)
-    lambda_handler(encoded_input)
+    lambda_handler(encoded_input.model_dump())
     mock_push.assert_called_once()
