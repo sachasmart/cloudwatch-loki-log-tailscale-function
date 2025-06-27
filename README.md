@@ -2,19 +2,21 @@
 > Work in Progress
 
 # Ship Cloudwatch Logs to Grafana Loki using Tailscale
+![cloudwatch_shipper](https://github.com/user-attachments/assets/498816e4-9e83-4230-9fe7-53c4e1330a1b)
 
-## Goal:
 
-- Idea is to have a Lambda function that processes AWS Cloudwatch logs and writes them to Grafana Loki, leveraging Tailscale for secure communication.
-- Better type safety and error handling with Pydantic.
+## Overview:
+My goal was to use Grafana Loki for aggregating logs across various distributed systems. I found CloudWatch challenging due to its limited query capabilities. Loki, with its powerful LogQL, offers more advanced and flexible querying options, allowing for deeper insights into log data. I noticed a lack of well-maintained, readily available solutions that addressed these specific needs.
 
-## About
+#### Project Components and Deployment
+This project generates a container image artifact designed for deployment as a Lambda function. Before deployment, this image must be pushed to an Elastic Container Registry (ECR), as AWS Lambda doesn't support external container registries.
 
-Process AWS Cloudwatch logs using a Lambda function and write the logs to the Grafana Loki log aggregation system.
+The project also provides all the necessary Terraform configuration to deploy this Lambda function against an existing CloudWatch log group. If no log group is configured, it will automatically create an event-router, which the container will then use to push logs to your Loki instance.
 
-- [Variant of Cloudwatch Loki Shipper](https://github.com/roobert/cloudwatch-loki-shipper)
+#### Secure Data Transfer with Tailscale
+Tailscale is a crucial component of this project, serving as the secure backbone for shipping log data. It enables secure ingress into or egress from your AWS environment, ensuring that your log data is transferred safely and reliably.
 
-## Installation
+## Develop
 
 ### Prerequisites
 
