@@ -62,7 +62,8 @@ curl -vk -X POST "https://<k8 operator on tailnet>ts.net/loki/api/v1/push"   -H 
 ### Roadmap
 
 - [x] Clean up cloudwatch logs
-- [ ] Add (and fix) test cases
+- [x] Add (and fix) test cases
+- [ ] Continue to add more test cases
 - [x] Add Terraform configuration
 - [ ] Documentation
   - setting up Tailscale and K8s operator (include example of manifest)

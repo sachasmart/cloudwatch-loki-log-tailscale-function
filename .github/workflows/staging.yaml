@@ -6,7 +6,46 @@ on:
     branches:
       - main
 jobs:
+  test:
+    runs-on: ubuntu-latest
+    name: "Run unit tests"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+
+      - name: Install project dependencies
+        run: poetry install
+
+      - name: Run tests with pytest
+        run: |
+          mkdir -p test-results
+          poetry run pytest --junit-xml=test-results/results.xml
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: test-results/results.xml
+
+      - name: Publish Test Report
+        uses: dorny/test-reporter@v1
+        if: always()
+        with:
+          name: Pytest Results
+          path: test-results/results.xml
+          reporter: jest-junit
+
   backend:
+    needs: test
     runs-on: ubuntu-latest
     permissions:
       contents: read
