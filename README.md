@@ -6,15 +6,15 @@
 
 
 ## Overview:
-My goal was to use Grafana Loki for aggregating logs across various distributed systems. I found CloudWatch challenging due to its limited query capabilities. Loki, with its powerful LogQL, offers more advanced and flexible querying options, allowing for deeper insights into log data. I noticed a lack of well-maintained, readily available solutions that addressed these specific needs.
+My goal was to use [Grafana Loki](https://grafana.com/oss/loki/) for aggregating logs across various distributed systems. I found CloudWatch challenging due to its limited query capabilities. Loki, with its powerful [LogQL](https://grafana.com/docs/loki/latest/query/), offers more advanced and flexible querying options, allowing for deeper insights into log data. I noticed a lack of well-maintained, readily available solutions that addressed these specific needs.
 
 #### Project Components and Deployment
 This project generates a container image artifact designed for deployment as a Lambda function. Before deployment, this image must be pushed to an Elastic Container Registry (ECR), as AWS Lambda doesn't support external container registries.
 
-The project also provides all the necessary Terraform configuration to deploy this Lambda function against an existing CloudWatch log group. If no log group is configured, it will automatically create an event-router, which the container will then use to push logs to your Loki instance.
+The project also provides all the necessary [Terraform](https://developer.hashicorp.com/terraform) configuration to deploy this Lambda function against an existing CloudWatch log group. If no log group is configured, it will automatically create an event-router, which the container will then use to push logs to your Loki instance.
 
 #### Secure Data Transfer with Tailscale
-Tailscale is a crucial component of this project, serving as the secure backbone for shipping log data. It enables secure ingress into or egress from your AWS environment, ensuring that your log data is transferred safely and reliably.
+[Tailscale](https://tailscale.com/) is a central component of this project, serving as the secure backbone for shipping log data. It enables secure ingress into or egress from your AWS environment, ensuring that your log data is transferred safely and reliably.
 
 ## Develop
 
@@ -22,6 +22,10 @@ Tailscale is a crucial component of this project, serving as the secure backbone
 
 - Poetry
 - Python 3.12
+- Docker
+- [Terraform](https://developer.hashicorp.com/terraform)
+- AWS Account
+- [Tailscale](https://tailscale.com/) account
 
 ### Install dependencies
 
@@ -58,6 +62,10 @@ curl -vk -X POST "https://<k8 operator on tailnet>ts.net/loki/api/v1/push"   -H 
 ```
 
 <img width="1661" alt="Screen Shot 2025-06-21 at 11 06 59 PM" src="https://github.com/user-attachments/assets/4d223b28-7c50-47c5-bca2-92b0c56d8e47" />
+
+## Build Steps
+! TODO !
+In the meantime, take the [container image](https://github.com/sachasmart/cloudwatch-loki-log-tailscale-function/pkgs/container/cloudwatch-loki-log-tailscale-function) and push it to your AWS ECR. 
 
 ---
 
