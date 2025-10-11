@@ -21,8 +21,7 @@ variable "tailscale_auth_key" {
   type        = string
 }
 
-variable "log_group_name" {
-  description = "Name of the existing CloudWatch log group to subscribe to. If not provided, a default one called event-router will be created"
-  type        = string
-  default     = ""
+variable "log_groups" {
+  description = "List of CloudWatch log group names to subscribe to"
+  type        = list(string)
 }
