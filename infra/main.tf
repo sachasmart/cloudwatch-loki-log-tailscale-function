@@ -19,7 +19,7 @@ module "cloudwatch_log_subscription" {
   source = "./modules/cloudwatch"
 
   region               = var.region
-  log_group_names      = var.log_groups
+  log_group_name       = var.log_group_names
   lambda_function_name = aws_lambda_function.cloudwatch-loki-tailscale-shipper.function_name
   lambda_function_arn  = aws_lambda_function.cloudwatch-loki-tailscale-shipper.arn
   lambda_role_name     = aws_iam_role.cloudwatch-loki-tailscale-shipper.name
